@@ -1,5 +1,8 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
 #include <iostream>
 
@@ -8,24 +11,17 @@
 #include "Resources/ResourceManager.h"
 
 
-GLfloat point[] =
-{
-	 0.0f,  0.5f, 0.0f,
-	 0.5f, -0.5f, 0.0f,
-	-0.5f, -0.5f, 0.0f
+GLfloat vertices[] = {
+	// positions          // colors           // texture coords
+	 0.5f,  0.5f, 0.0f,   1.0f, 0.0f, 0.0f,   1.0f, 1.0f,   // top right
+	 0.5f, -0.5f, 0.0f,   0.0f, 1.0f, 0.0f,   1.0f, 0.0f,   // bottom right
+	-0.5f, -0.5f, 0.0f,   0.0f, 0.0f, 1.0f,   0.0f, 0.0f,   // bottom left
+	-0.5f,  0.5f, 0.0f,   1.0f, 1.0f, 0.0f,   0.0f, 1.0f    // top left 
 };
 
-GLfloat colors[] =
-{
-	1.0f, 0.0f, 0.0f,
-	0.0f, 1.0f, 0.0f,
-	0.0f, 0.0f, 1.0f
-};
-
-GLfloat texCoords[] = {
-	0.5f, 1.0f, 
-	1.0f, 0.0f,
-	0.0f, 0.0f 
+GLuint indices[] = {  // note that we start from 0!
+	0, 1, 3,   // first triangle
+	1, 2, 3    // second triangle
 };
 
 int gl_windowWidth = 640;
@@ -96,22 +92,12 @@ int main(int arcg, char** argv)
 			return -1;
 		}
 
-		auto tex = resourceManager.loadTexture("DefaultTexture", "res/textures/map_16x16.png");
+		auto tex = resourceManager.loadTexture("DefaultTexture", "res/textures/container.jpg");
 
-		GLuint colors_vbo = 0;
-		glGenBuffers(1, &colors_vbo);
-		glBindBuffer(GL_ARRAY_BUFFER, colors_vbo);
-		glBufferData(GL_ARRAY_BUFFER, sizeof(colors), colors, GL_STATIC_DRAW);
-
-		GLuint points_vbo = 0;
-		glGenBuffers(1, &points_vbo);
-		glBindBuffer(GL_ARRAY_BUFFER, points_vbo);
-		glBufferData(GL_ARRAY_BUFFER, sizeof(point), point, GL_STATIC_DRAW);
-
-		GLuint texCoords_vbo = 0;
-		glGenBuffers(1, &texCoords_vbo);
-		glBindBuffer(GL_ARRAY_BUFFER, texCoords_vbo);
-		glBufferData(GL_ARRAY_BUFFER, sizeof(texCoords), texCoords, GL_STATIC_DRAW);
+		GLuint vertices_vbo = 0;
+		glGenBuffers(1, &vertices_vbo);
+		glBindBuffer(GL_ARRAY_BUFFER, vertices_vbo);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
 
 		GLuint vao = 0;
@@ -119,19 +105,24 @@ int main(int arcg, char** argv)
 		glBindVertexArray(vao);
 
 		glEnableVertexAttribArray(0);
-		glBindBuffer(GL_ARRAY_BUFFER, points_vbo);
-		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, nullptr);
+		glBindBuffer(GL_ARRAY_BUFFER, vertices_vbo);
+		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (GLvoid*)(0 * sizeof(GLfloat)));
 
 		glEnableVertexAttribArray(1);
-		glBindBuffer(GL_ARRAY_BUFFER, colors_vbo);
-		glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, nullptr);
+		glBindBuffer(GL_ARRAY_BUFFER, vertices_vbo);
+		glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (GLvoid*)(3 * sizeof(GLfloat)));
 
 		glEnableVertexAttribArray(2);
-		glBindBuffer(GL_ARRAY_BUFFER, texCoords_vbo);
-		glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 0, nullptr);
+		glBindBuffer(GL_ARRAY_BUFFER, vertices_vbo);
+		glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (GLvoid*)(6 * sizeof(GLfloat)));
+
+		GLuint EBO;
+		glGenBuffers(1, &EBO);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 
 		pDefaultShaderProgram->use();
-		pDefaultShaderProgram->setInt("tex", 0);
+		pDefaultShaderProgram->setInt("ourTexture", 0);
 
 		/* Loop until the user closes the window */
 		while (!glfwWindowShouldClose(pWindow))
@@ -142,7 +133,9 @@ int main(int arcg, char** argv)
 			pDefaultShaderProgram->use();
 			glBindVertexArray(vao);
 			tex->bind();
-			glDrawArrays(GL_TRIANGLES, 0, 3);
+			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+			glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
 			/* Swap front and back buffers */
 			glfwSwapBuffers(pWindow);

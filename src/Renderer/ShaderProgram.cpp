@@ -92,6 +92,11 @@ namespace Renderer
 
     void ShaderProgram::setInt(const std::string& name, const GLint value)
     {
+        GLint vertexColorLocation = glGetUniformLocation(m_ID, name.c_str());
+        if (vertexColorLocation == -1)
+        {
+            std::cerr << "ERROR::UNIFORM: " << name << std::endl;
+        }
         glUniform1i(glGetUniformLocation(m_ID, name.c_str()), value);
     }
 }
