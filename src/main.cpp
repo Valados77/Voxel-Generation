@@ -8,7 +8,9 @@
 
 #include "Renderer/ShaderProgram.h"
 #include "Renderer/Texture2D.h"
+#include "Renderer/Camera.h"
 #include "Resources/ResourceManager.h"
+
 
 
 float vertices[] = {
@@ -55,13 +57,26 @@ float vertices[] = {
     -0.5f,  0.5f, -0.5f,  0.0f, 1.0f
 };
 
+glm::vec3 cubePositions[] = {
+		glm::vec3(0.0f, 0.0f, 0.0f),
+		glm::vec3(1.0f, 0.0f, 0.0f),
+		glm::vec3(-1.5f, -2.2f, -2.5f),
+		glm::vec3(-3.8f, -2.0f, -12.3f),
+		glm::vec3(2.4f, -0.4f, -3.5f),
+		glm::vec3(-1.7f, 3.0f, -7.5f),
+		glm::vec3(1.3f, -2.0f, -2.5f),
+		glm::vec3(1.5f, 2.0f, -2.5f),
+		glm::vec3(1.5f, 0.2f, -1.5f),
+		glm::vec3(-1.3f, 1.0f, -1.5f)
+};
+
 GLuint indices[] = {  // note that we start from 0!
 	0, 1, 3,   // first triangle
 	1, 2, 3    // second triangle
 };
 
 int gl_windowWidth = 640;
-int gl_windowHeight = 480;
+int gl_windowHeight = 640;
 
 GLfloat lastX = 400, lastY = 300;
 GLfloat yaw = -90.0f;
@@ -74,67 +89,15 @@ glm::vec3 cameraPos = glm::vec3(0.0f, 0.0f, 3.0f);
 glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
 glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
 
-void glfwWindowSizeCallBack(GLFWwindow* pWindow, int wigth, int height)
-{
-	gl_windowWidth = wigth;
-	gl_windowHeight = height;
-	glViewport(0, 0, gl_windowWidth, gl_windowHeight);
-}
+Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
 
-void glfwKeyCallback(GLFWwindow* pWindow, int key, int scancode, int action, int mode)
-{
-	if (key == GLFW_KEY_ESCAPE && GLFW_PRESS)
-	{
-		glfwSetWindowShouldClose(pWindow, GL_TRUE);
-	}
+GLfloat deltaTime = 0.0f;
+GLfloat lastFrame = 0.0f;
 
-	GLfloat cameraSpeed = 0.01f;
-	if (key == GLFW_KEY_W)
-		cameraPos += cameraSpeed * cameraFront;
-	if (key == GLFW_KEY_S)
-		cameraPos -= cameraSpeed * cameraFront;
-	if (key == GLFW_KEY_A)
-		cameraPos -= glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed;
-	if (key == GLFW_KEY_D)
-		cameraPos += glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed;
-}
-
-void glfwCursorPosCallback(GLFWwindow* window, double xpos, double ypos)
-{
-	if (firstMouse)
-	{
-		lastX = xpos;
-		lastY = ypos;
-		firstMouse = false;
-	}
-
-	GLfloat xoffset = xpos - lastX;
-	GLfloat yoffset = lastY - ypos; // Обратный порядок вычитания потому что оконные Y-координаты возрастают с верху вниз 
-	lastX = xpos;
-	lastY = ypos;
-
-	GLfloat sensitivity = 0.05f;
-	xoffset *= sensitivity;
-	yoffset *= sensitivity;
-
-	yaw += xoffset;
-	pitch += yoffset;
-
-	if (pitch > 89.0f)
-		pitch = 89.0f;
-	if (pitch < -89.0f)
-		pitch = -89.0f;
-}
-
-void glfwScrollCallback(GLFWwindow* window, double xoffset, double yoffset)
-{
-	if (fov >= 1.0f && fov <= 45.0f)
-		fov -= yoffset;
-	if (fov <= 1.0f)
-		fov = 1.0f;
-	if (fov >= 45.0f)
-		fov = 45.0f;
-}
+void glfwWindowSizeCallBack(GLFWwindow* pWindow, int wigth, int height);
+void glfwKeyCallback(GLFWwindow* pWindow, int key, int scancode, int action, int mode);
+void glfwCursorPosCallback(GLFWwindow* window, double xpos, double ypos);
+void glfwScrollCallback(GLFWwindow* window, double xoffset, double yoffset);
 
 int main(int arcg, char** argv)
 {
@@ -217,12 +180,14 @@ int main(int arcg, char** argv)
 		pDefaultShaderProgram->use();
 		pDefaultShaderProgram->setInt("ourTexture", 0);
 
-
-		
+		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
 		/* Loop until the user closes the window */
 		while (!glfwWindowShouldClose(pWindow))
 		{
+			GLfloat currentFrame = glfwGetTime();
+			deltaTime = currentFrame - lastFrame;
+			lastFrame = currentFrame;
 
 			/* Render here */
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -231,7 +196,6 @@ int main(int arcg, char** argv)
 			glBindVertexArray(vao);
 			tex->bind();
 
-			glm::mat4 model = glm::mat4(1.0f);
 			glm::mat4 view = glm::mat4(1.0f);
 			glm::mat4 projection = glm::mat4(1.0f);
 			glm::vec3 front = glm::vec3(1.0f);
@@ -239,19 +203,25 @@ int main(int arcg, char** argv)
 			front.y = sin(glm::radians(pitch));
 			front.z = cos(glm::radians(pitch)) * sin(glm::radians(yaw));
 			cameraFront = glm::normalize(front);
-			model = glm::rotate(model, glm::radians(0.f), glm::vec3(0.5f, 1.0f, 0.0f));
 
-			view = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
-
-			projection = glm::perspective(glm::radians(fov), static_cast<float>(gl_windowWidth / gl_windowHeight), 0.1f, 100.0f);
-			pDefaultShaderProgram->setMat4f("model", model);
+			view = camera.GetViewMatrix();
+			projection = glm::perspective(camera.Zoom, static_cast<float>(gl_windowWidth / gl_windowHeight), 0.1f, 1000.0f);
 			pDefaultShaderProgram->setMat4f("view", view);
-			pDefaultShaderProgram->setMat4f("projection", projection);
+			pDefaultShaderProgram->setMat4f("projection", projection);			
 
 			glEnable(GL_DEPTH_TEST);
 			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-			glDrawArrays(GL_TRIANGLES, 0, 36);
-			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+			for (GLuint i = 0; i < 10; i++)
+			{
+				// Calculate the model matrix for each object and pass it to shader before drawing
+				glm::mat4 model = glm::mat4(1.0f);
+				model = glm::translate(model, cubePositions[i]);
+				pDefaultShaderProgram->setMat4f("view", view);
+				pDefaultShaderProgram->setMat4f("projection", projection);
+				pDefaultShaderProgram->setMat4f("model", model);
+
+				glDrawArrays(GL_TRIANGLES, 0, 36);
+			}
 
 			/* Swap front and back buffers */
 			glfwSwapBuffers(pWindow);
@@ -263,4 +233,52 @@ int main(int arcg, char** argv)
 
 	glfwTerminate();
 	return 0;
+}
+
+void glfwWindowSizeCallBack(GLFWwindow* pWindow, int wigth, int height)
+{
+	gl_windowWidth = wigth;
+	gl_windowHeight = height;
+	glViewport(0, 0, gl_windowWidth, gl_windowHeight);
+}
+
+void glfwKeyCallback(GLFWwindow* pWindow, int key, int scancode, int action, int mode)
+{
+	if (key == GLFW_KEY_ESCAPE && GLFW_PRESS)
+	{
+		glfwSetWindowShouldClose(pWindow, GL_TRUE);
+	}
+
+	GLfloat cameraSpeed = 0.01f;
+	if (key == GLFW_KEY_W)
+		camera.ProcessKeyboard(FORWARD, deltaTime);
+	if (key == GLFW_KEY_S)
+		camera.ProcessKeyboard(BACKWARD, deltaTime);
+	if (key == GLFW_KEY_A)
+		camera.ProcessKeyboard(LEFT, deltaTime);
+	if (key == GLFW_KEY_D)
+		camera.ProcessKeyboard(RIGHT, deltaTime);
+}
+
+void glfwCursorPosCallback(GLFWwindow* window, double xpos, double ypos)
+{
+	if (firstMouse)
+	{
+		lastX = xpos;
+		lastY = ypos;
+		firstMouse = false;
+	}
+
+	GLfloat xoffset = xpos - lastX;
+	GLfloat yoffset = lastY - ypos;  // Reversed since y-coordinates go from bottom to left
+
+	lastX = xpos;
+	lastY = ypos;
+
+	camera.ProcessMouseMovement(xoffset, yoffset);
+}
+
+void glfwScrollCallback(GLFWwindow* window, double xoffset, double yoffset)
+{
+	camera.ProcessMouseScroll(yoffset);
 }
