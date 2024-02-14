@@ -1,6 +1,9 @@
 #pragma once
 
 #include <glad/glad.h>
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 #include <string>
 #include <iostream>
 
@@ -27,5 +30,6 @@ namespace Renderer
 		bool isCompilled() const { return m_isCompiled; }
 		void use() const;
 		void setInt(const std::string& name, const GLint value);
+		void setMat4f(const std::string& name, const glm::mat4& trans);
 	};
 }

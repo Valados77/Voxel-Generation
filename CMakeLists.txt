@@ -10,6 +10,8 @@ src/renderer/ShaderProgram.cpp
 src/renderer/ShaderProgram.h
 src/renderer/Texture2D.cpp
 src/renderer/Texture2D.h
+src/renderer/Camera.cpp
+src/renderer/Camera.h
 src/resources/ResourceManager.cpp
 src/resources/ResourceManager.h
 src/resources/ResourceManager.h
