@@ -14,47 +14,35 @@
 
 
 float vertices[] = {
-    -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
-     0.5f, -0.5f, -0.5f,  1.0f, 0.0f,
-     0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-     0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-    -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
-    -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
+    -0.5f, -0.5f,  -0.5f,  0.0f, 0.0f,	//front
+    -0.5f,  0.5f,  -0.5f,  0.0f, 1.0f,
+     0.5f,  0.5f,  -0.5f,  1.0f, 1.0f,
+     0.5f, -0.5f,  -0.5f,  1.0f, 0.0f,
 
-    -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-     0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-     0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
-     0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
-    -0.5f,  0.5f,  0.5f,  0.0f, 1.0f,
-    -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+    -0.5f, -0.5f, 0.5f,  0.0f, 0.0f,	//back
+     0.5f, -0.5f, 0.5f,  1.0f, 0.0f,
+     0.5f,  0.5f, 0.5f,  1.0f, 1.0f,
+    -0.5f,  0.5f, 0.5f,  0.0f, 1.0f,
 
-    -0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+    -0.5f,  0.5f,  0.5f,  1.0f, 0.0f,	//left
     -0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
     -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-    -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
     -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-    -0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
 
-     0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-     0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-     0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-     0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+     0.5f,  0.5f,  0.5f,  1.0f, 0.0f,	//right
      0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-     0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+     0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+     0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
 
-    -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+    -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,	//bottom
      0.5f, -0.5f, -0.5f,  1.0f, 1.0f,
      0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-     0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
     -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-    -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
 
-    -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
-     0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-     0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-     0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+    -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,	//top
     -0.5f,  0.5f,  0.5f,  0.0f, 0.0f,
-    -0.5f,  0.5f, -0.5f,  0.0f, 1.0f
+     0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+     0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
 };
 
 glm::vec3 cubePositions[] = {
@@ -72,27 +60,35 @@ glm::vec3 cubePositions[] = {
 
 GLuint indices[] = {  // note that we start from 0!
 	0, 1, 3,   // first triangle
-	1, 2, 3    // second triangle
+	1, 2, 3,    // second triangle
+
+	4, 5, 7,   // first triangle
+	5, 6, 7,    // second triangle
+
+	8, 9, 11,   // first triangle
+	9, 10, 11,    // second triangle
+
+	12, 13, 15,   // first triangle
+	13, 14, 15,    // second triangle
+
+	16, 17, 19,   // first triangle
+	17, 18, 19,    // second triangle
+
+	20, 21, 23,   // first triangle
+	21, 22, 23,    // second triangle
 };
 
 int gl_windowWidth = 640;
 int gl_windowHeight = 640;
 
-GLfloat lastX = 400, lastY = 300;
-GLfloat yaw = -90.0f;
-GLfloat pitch = 0.0f;
+Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
+float lastX = gl_windowWidth / 2.0f;
+float lastY = gl_windowHeight / 2.0f;
 bool firstMouse = true;
 
-GLfloat fov = 45.f;
-
-glm::vec3 cameraPos = glm::vec3(0.0f, 0.0f, 3.0f);
-glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
-glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
-
-Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
-
-GLfloat deltaTime = 0.0f;
-GLfloat lastFrame = 0.0f;
+// timing
+float deltaTime = 0.0f;	// time between current frame and last frame
+float lastFrame = 0.0f;
 
 void glfwWindowSizeCallBack(GLFWwindow* pWindow, int wigth, int height);
 void glfwKeyCallback(GLFWwindow* pWindow, int key, int scancode, int action, int mode);
@@ -154,15 +150,25 @@ int main(int arcg, char** argv)
 
 		auto tex = resourceManager.loadTexture("DefaultTexture", "res/textures/container.jpg");
 
+		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+		glEnable(GL_CULL_FACE);
+		glCullFace(GL_BACK);
+
 		GLuint vertices_vbo = 0;
 		glGenBuffers(1, &vertices_vbo);
 		glBindBuffer(GL_ARRAY_BUFFER, vertices_vbo);
-		glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-
-
+		
 		GLuint vao = 0;
 		glGenVertexArrays(1, &vao);
 		glBindVertexArray(vao);
+
+		GLuint EBO;
+		glGenBuffers(1, &EBO);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+
+
+		glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 
 		glEnableVertexAttribArray(0);
 		glBindBuffer(GL_ARRAY_BUFFER, vertices_vbo);
@@ -172,15 +178,10 @@ int main(int arcg, char** argv)
 		glBindBuffer(GL_ARRAY_BUFFER, vertices_vbo);
 		glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), (GLvoid*)(3 * sizeof(GLfloat)));
 
-		GLuint EBO;
-		glGenBuffers(1, &EBO);
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+
 
 		pDefaultShaderProgram->use();
 		pDefaultShaderProgram->setInt("ourTexture", 0);
-
-		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
 		/* Loop until the user closes the window */
 		while (!glfwWindowShouldClose(pWindow))
@@ -198,19 +199,14 @@ int main(int arcg, char** argv)
 
 			glm::mat4 view = glm::mat4(1.0f);
 			glm::mat4 projection = glm::mat4(1.0f);
-			glm::vec3 front = glm::vec3(1.0f);
-			front.x = cos(glm::radians(pitch)) * cos(glm::radians(yaw));
-			front.y = sin(glm::radians(pitch));
-			front.z = cos(glm::radians(pitch)) * sin(glm::radians(yaw));
-			cameraFront = glm::normalize(front);
 
 			view = camera.GetViewMatrix();
-			projection = glm::perspective(camera.Zoom, static_cast<float>(gl_windowWidth / gl_windowHeight), 0.1f, 1000.0f);
+			projection = glm::perspective(camera.Zoom, static_cast<float>(gl_windowWidth / gl_windowHeight), 0.1f, 100.0f);
 			pDefaultShaderProgram->setMat4f("view", view);
 			pDefaultShaderProgram->setMat4f("projection", projection);			
 
 			glEnable(GL_DEPTH_TEST);
-			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+			//glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
 			for (GLuint i = 0; i < 10; i++)
 			{
 				// Calculate the model matrix for each object and pass it to shader before drawing
@@ -220,7 +216,8 @@ int main(int arcg, char** argv)
 				pDefaultShaderProgram->setMat4f("projection", projection);
 				pDefaultShaderProgram->setMat4f("model", model);
 
-				glDrawArrays(GL_TRIANGLES, 0, 36);
+				//glDrawArrays(GL_TRIANGLES, 0, 36);
+				glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
 			}
 
 			/* Swap front and back buffers */
@@ -249,7 +246,6 @@ void glfwKeyCallback(GLFWwindow* pWindow, int key, int scancode, int action, int
 		glfwSetWindowShouldClose(pWindow, GL_TRUE);
 	}
 
-	GLfloat cameraSpeed = 0.01f;
 	if (key == GLFW_KEY_W)
 		camera.ProcessKeyboard(FORWARD, deltaTime);
 	if (key == GLFW_KEY_S)

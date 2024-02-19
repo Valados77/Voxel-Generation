@@ -12,6 +12,10 @@ src/renderer/Texture2D.cpp
 src/renderer/Texture2D.h
 src/renderer/Camera.cpp
 src/renderer/Camera.h
+src/renderer/ChunkRenderer.cpp
+src/renderer/ChunkRenderer.h
+src/renderer/BufferProgram.cpp
+src/renderer/BufferProgram.h
 src/resources/ResourceManager.cpp
 src/resources/ResourceManager.h
 src/resources/ResourceManager.h
