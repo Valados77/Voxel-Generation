@@ -12,8 +12,10 @@ namespace Renderer
 	{
 	public:
 		BufferProgram();
-		void BufferDataVBO(const float mass[] );
-		void BufferDataEBO(const float mass[]);
+		void BufferDataVBO(GLsizeiptr size, const GLfloat* mass);
+		void BufferDataEBO(GLsizeiptr size, const GLuint* mass);
+		void VertexAttribPointer(const int& layout, const int& attribCount, const int& buffSize, const int& firstBuff);
+		void Bind();
 	private:
 		GLuint m_vertices_VBO;
 		GLuint m_VAO;

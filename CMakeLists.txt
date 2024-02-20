@@ -16,6 +16,8 @@ src/renderer/ChunkRenderer.cpp
 src/renderer/ChunkRenderer.h
 src/renderer/BufferProgram.cpp
 src/renderer/BufferProgram.h
+src/renderer/Block.cpp
+src/renderer/Block.h
 src/resources/ResourceManager.cpp
 src/resources/ResourceManager.h
 src/resources/ResourceManager.h

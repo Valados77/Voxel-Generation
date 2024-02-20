@@ -14,13 +14,25 @@ namespace Renderer
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_EBO);
 	}
 
-	void BufferProgram::BufferDataVBO(const float mass[])
+	void BufferProgram::BufferDataVBO(GLsizeiptr size, const GLfloat* mass)
 	{
-				glBufferData(GL_ARRAY_BUFFER, sizeof(mass), mass, GL_STATIC_DRAW);
+				glBufferData(GL_ARRAY_BUFFER, size, mass, GL_STATIC_DRAW);
 	}
 
-	void BufferProgram::BufferDataEBO(const float mass[])
+	void BufferProgram::BufferDataEBO(GLsizeiptr size, const GLuint* mass)
 	{
-		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(mass), mass, GL_STATIC_DRAW);
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, size, mass, GL_STATIC_DRAW);
+	}
+
+	void BufferProgram::VertexAttribPointer(const int& layout, const int& attribCount, const int& buffSize, const int& firstBuff)
+	{
+		glEnableVertexAttribArray(layout);
+		glBindBuffer(GL_ARRAY_BUFFER, m_vertices_VBO);
+		glVertexAttribPointer(layout, attribCount, GL_FLOAT, GL_FALSE, buffSize * sizeof(GLfloat), (GLvoid*)(firstBuff * sizeof(GLfloat)));
+	}
+
+	void BufferProgram::Bind()
+	{
+		glBindVertexArray(m_VAO);
 	}
 }

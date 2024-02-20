@@ -9,41 +9,95 @@
 #include "Renderer/ShaderProgram.h"
 #include "Renderer/Texture2D.h"
 #include "Renderer/Camera.h"
+#include "Renderer/BufferProgram.h"
 #include "Resources/ResourceManager.h"
 
 
-
 float vertices[] = {
-    -0.5f, -0.5f,  -0.5f,  0.0f, 0.0f,	//front
-    -0.5f,  0.5f,  -0.5f,  0.0f, 1.0f,
-     0.5f,  0.5f,  -0.5f,  1.0f, 1.0f,
-     0.5f, -0.5f,  -0.5f,  1.0f, 0.0f,
+	0, 0, 0,  0.0f, 1.0f,	//0	//bottom
+	0, 0, 1,  1.0f, 1.0f,	//1
+	1, 0, 1,  1.0f, 0.0f,	//2
+	1, 0, 0,  0.0f, 0.0f,	//3
 
-    -0.5f, -0.5f, 0.5f,  0.0f, 0.0f,	//back
-     0.5f, -0.5f, 0.5f,  1.0f, 0.0f,
-     0.5f,  0.5f, 0.5f,  1.0f, 1.0f,
-    -0.5f,  0.5f, 0.5f,  0.0f, 1.0f,
-
-    -0.5f,  0.5f,  0.5f,  1.0f, 0.0f,	//left
-    -0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-    -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-    -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-
-     0.5f,  0.5f,  0.5f,  1.0f, 0.0f,	//right
-     0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-     0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-     0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-
-    -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,	//bottom
-     0.5f, -0.5f, -0.5f,  1.0f, 1.0f,
-     0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-    -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-
-    -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,	//top
-    -0.5f,  0.5f,  0.5f,  0.0f, 0.0f,
-     0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-     0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+	0,  1, 0,  0.0f, 1.0f,	//4	//top
+	0,  1, 1,  0.0f, 0.0f,	//5
+	1,  1, 1,  1.0f, 0.0f,	//6
+	1,  1, 0,  1.0f, 1.0f,	//7
 };
+
+
+GLuint indices[] = {  // note that we start from 0!
+	0, 4, 7,	//front
+	7, 3, 0,    
+
+	2, 6, 5,	//back
+	5, 1, 2,    
+
+	0, 1, 5,	//left
+	5, 4, 0,    
+
+	2, 3, 7,	//right
+	7, 6, 2,    
+
+	2, 1, 0,	//bottom
+	0, 3, 2,    
+
+	5, 6, 7,	//top
+	7, 4, 5    
+};
+
+//float vertices[] = {
+//	0, 0,  0,  0.0f, 0.0f,	//front
+//	0,  1,  0,  0.0f, 1.0f,
+//	 1,  1,  0,  1.0f, 1.0f,
+//	 1, 0,  0,  1.0f, 0.0f,
+//
+//	0, 0, 1,  0.0f, 0.0f,	//back
+//	 1, 0, 1,  1.0f, 0.0f,
+//	 1,  1, 1,  1.0f, 1.0f,
+//	0,  1, 1,  0.0f, 1.0f,
+//
+//	0,  1,  1,  1.0f, 0.0f,	//left
+//	0,  1, 0,  1.0f, 1.0f,
+//	0, 0, 0,  0.0f, 1.0f,
+//	0, 0,  1,  0.0f, 0.0f,
+//
+//	 1,  1,  1,  1.0f, 0.0f,	//right
+//	 1, 0,  1,  0.0f, 0.0f,
+//	 1, 0, 0,  0.0f, 1.0f,
+//	 1,  1, 0,  1.0f, 1.0f,
+//
+//	0, 0, 0,  0.0f, 1.0f,	//bottom
+//	 1, 0, 0,  1.0f, 1.0f,
+//	 1, 0,  1,  1.0f, 0.0f,
+//	0, 0,  1,  0.0f, 0.0f,
+//
+//	0,  1, 0,  0.0f, 1.0f,	//top
+//	0,  1,  1,  0.0f, 0.0f,
+//	 1,  1,  1,  1.0f, 0.0f,
+//	 1,  1, 0,  1.0f, 1.0f,
+//};
+//
+//GLuint indices[] = {  // note that we start from 0!
+//	0, 1, 3,   // first triangle
+//	1, 2, 3,    // second triangle
+//
+//	4, 5, 7,   // first triangle
+//	5, 6, 7,    // second triangle
+//
+//	8, 9, 11,   // first triangle
+//	9, 10, 11,    // second triangle
+//
+//	12, 13, 15,   // first triangle
+//	13, 14, 15,    // second triangle
+//
+//	16, 17, 19,   // first triangle
+//	17, 18, 19,    // second triangle
+//
+//	20, 21, 23,   // first triangle
+//	21, 22, 23,    // second triangle
+//};
+
 
 glm::vec3 cubePositions[] = {
 		glm::vec3(0.0f, 0.0f, 0.0f),
@@ -56,26 +110,6 @@ glm::vec3 cubePositions[] = {
 		glm::vec3(1.5f, 2.0f, -2.5f),
 		glm::vec3(1.5f, 0.2f, -1.5f),
 		glm::vec3(-1.3f, 1.0f, -1.5f)
-};
-
-GLuint indices[] = {  // note that we start from 0!
-	0, 1, 3,   // first triangle
-	1, 2, 3,    // second triangle
-
-	4, 5, 7,   // first triangle
-	5, 6, 7,    // second triangle
-
-	8, 9, 11,   // first triangle
-	9, 10, 11,    // second triangle
-
-	12, 13, 15,   // first triangle
-	13, 14, 15,    // second triangle
-
-	16, 17, 19,   // first triangle
-	17, 18, 19,    // second triangle
-
-	20, 21, 23,   // first triangle
-	21, 22, 23,    // second triangle
 };
 
 int gl_windowWidth = 640;
@@ -141,6 +175,8 @@ int main(int arcg, char** argv)
 
 	{
 		ResourceManager resourceManager(argv[0]);
+		Renderer::BufferProgram bufferProgram;
+
 		auto pDefaultShaderProgram = resourceManager.loadShaders("Defaulthader", "res/shaders/vertex.txt", "res/shaders/fragment.txt");
 		if (!pDefaultShaderProgram)
 		{
@@ -154,31 +190,11 @@ int main(int arcg, char** argv)
 		glEnable(GL_CULL_FACE);
 		glCullFace(GL_BACK);
 
-		GLuint vertices_vbo = 0;
-		glGenBuffers(1, &vertices_vbo);
-		glBindBuffer(GL_ARRAY_BUFFER, vertices_vbo);
-		
-		GLuint vao = 0;
-		glGenVertexArrays(1, &vao);
-		glBindVertexArray(vao);
+		bufferProgram.BufferDataVBO(sizeof(vertices), vertices);
+		bufferProgram.BufferDataEBO(sizeof(indices), indices);
 
-		GLuint EBO;
-		glGenBuffers(1, &EBO);
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-
-
-		glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
-
-		glEnableVertexAttribArray(0);
-		glBindBuffer(GL_ARRAY_BUFFER, vertices_vbo);
-		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), (GLvoid*)(0 * sizeof(GLfloat)));
-
-		glEnableVertexAttribArray(1);
-		glBindBuffer(GL_ARRAY_BUFFER, vertices_vbo);
-		glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), (GLvoid*)(3 * sizeof(GLfloat)));
-
-
+		bufferProgram.VertexAttribPointer(0, 3, 5, 0);
+		bufferProgram.VertexAttribPointer(1, 2, 5, 3);
 
 		pDefaultShaderProgram->use();
 		pDefaultShaderProgram->setInt("ourTexture", 0);
@@ -194,7 +210,7 @@ int main(int arcg, char** argv)
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 			pDefaultShaderProgram->use();
-			glBindVertexArray(vao);
+			bufferProgram.Bind();
 			tex->bind();
 
 			glm::mat4 view = glm::mat4(1.0f);

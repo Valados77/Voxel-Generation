@@ -96,6 +96,7 @@ namespace Renderer
         if (vertexColorLocation == -1)
         {
             std::cerr << "ERROR::UNIFORM: " << name << std::endl;
+            return;
         }
         glUniform1i(glGetUniformLocation(m_ID, name.c_str()), value);
     }
@@ -106,6 +107,7 @@ namespace Renderer
         if (transformLoc == -1)
         {
             std::cerr << "ERROR::UNIFORM: " << name << std::endl;
+            return;
         }
         glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(trans));
     }
